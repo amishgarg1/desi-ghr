@@ -49,19 +49,22 @@ const Navbar = () => {
             {cartItemCount > 0 && (
               <span style={{ 
                 position: 'absolute', 
-                top: -4, 
-                right: -4, 
+                top: '0', 
+                right: '0', 
+                transform: 'translate(40%, -40%)',
                 background: 'var(--color-primary)', 
                 color: 'white', 
-                fontSize: '0.65rem', 
-                fontWeight: 'bold', 
+                fontSize: '0.7rem', 
+                fontWeight: '700', 
                 width: '18px', 
                 height: '18px', 
                 borderRadius: '50%', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                lineHeight: 1
+                lineHeight: '0',
+                border: '2px solid white',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
               }}>
                 {cartItemCount}
               </span>
@@ -77,19 +80,21 @@ const Navbar = () => {
             {cartItemCount > 0 && (
               <span style={{ 
                 position: 'absolute', 
-                top: -4, 
-                right: -4, 
+                top: '0', 
+                right: '0', 
+                transform: 'translate(40%, -40%)',
                 background: 'var(--color-primary)', 
                 color: 'white', 
-                fontSize: '0.65rem', 
-                fontWeight: 'bold', 
+                fontSize: '0.7rem', 
+                fontWeight: '700', 
                 width: '18px', 
                 height: '18px', 
                 borderRadius: '50%', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                lineHeight: 1
+                lineHeight: '0',
+                border: '2px solid white'
               }}>
                 {cartItemCount}
               </span>
