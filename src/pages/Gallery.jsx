@@ -24,7 +24,7 @@ const item = {
 
 const Gallery = () => {
   return (
-    <div className="pt-24 pb-12 overflow-hidden">
+    <div className="pt-32 pb-12 overflow-hidden">
       <div className="container text-center mb-10">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="heading-xl">Our <span className="text-primary">Gallery</span></h1>

@@ -39,11 +39,11 @@ const Menu = () => {
   };
 
   return (
-    <div className="pt-24 pb-12">
+    <div className="pt-32 pb-12">
       {/* Page Header */}
-      <div className="container text-center mb-6">
+      <div className="container text-center mb-10">
         <h1 className="heading-xl">Our <span className="text-primary">Menu</span></h1>
-        <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--color-text-light)' }}>
+        <p className="text-lg max-w-3xl mx-auto" style={{ color: 'var(--color-text-light)' }}>
           Discover the authentic taste of homemade Indian cuisine. From fulfilling breakfast to elaborate combos, we have something to delight every palate.
         </p>
       </div>
@@ -91,14 +91,14 @@ const Menu = () => {
                     <motion.div 
                       key={index} 
                       className="menu-item group"
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{ scale: 1.01 }}
                       transition={{ type: "spring", stiffness: 300 }}
+                      style={{ padding: '1.25rem 1rem' }}
                     >
-                      <span style={{ fontWeight: '500', fontSize: '1.1rem' }}>{item}</span>
+                      <span style={{ fontWeight: '500', fontSize: '1rem', flex: 1, paddingRight: '1rem' }}>{item}</span>
                       <button 
                         onClick={() => handleAddToCart(item)}
-                        className="p-2 rounded-full bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ background: 'rgba(147, 69, 43, 0.1)' }}
+                        className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all flex-shrink-0"
                       >
                         <Plus size={20} />
                       </button>

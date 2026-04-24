@@ -2,7 +2,7 @@ import { MapPin, Phone, Camera, CheckCircle2, Heart } from 'lucide-react';
 
 const About = () => {
   return (
-    <div className="pt-24 pb-12">
+    <div className="pt-32 pb-12">
       {/* Catering Section */}
       <section className="container mb-6">
         <div className="card glass relative overflow-hidden" style={{ border: '2px solid var(--color-primary)' }}>

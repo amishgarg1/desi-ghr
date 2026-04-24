@@ -1,12 +1,23 @@
 import { useCartStore } from '../store/cartStore';
 import { X, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 const Cart = () => {
   const { isCartOpen, toggleCart, cartItems, removeFromCart, updateQuantity, clearCart } = useCartStore();
   
-  // Calculate total derived from cartItems
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+  const handleCheckout = () => {
+    toast.success("Order placed successfully! We'll start preparing your food.", {
+      icon: '🍳',
+      duration: 4000
+    });
+    setTimeout(() => {
+      clearCart();
+      toggleCart();
+    }, 1500);
+  };
 
   return (
     <AnimatePresence>
@@ -81,7 +92,11 @@ const Cart = () => {
                   <span>Total</span>
                   <span className="text-primary">₹{total}</span>
                 </div>
-                <button className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                <button 
+                  onClick={handleCheckout}
+                  className="btn btn-primary" 
+                  style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}
+                >
                   <span>Checkout</span>
                   <ArrowRight size={20} />
                 </button>
