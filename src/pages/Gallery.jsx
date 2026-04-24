@@ -44,11 +44,11 @@ const Gallery = () => {
           viewport={{ once: true, margin: "-100px" }}
         >
           {images.map((src, idx) => (
-            <motion.div key={idx} variants={item} className="gallery-item relative overflow-hidden rounded-2xl group shadow-md border border-gray-100">
+            <motion.div key={idx} variants={item} className="gallery-item relative overflow-hidden rounded-full group shadow-lg border-4 border-white">
               <img 
                 src={src} 
                 alt={`Desi Ghr food ${idx + 1}`} 
-                style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '4/3' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '1/1' }}
                 className="transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
