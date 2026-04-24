@@ -4,7 +4,7 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
 import About from './pages/About'
-import Gallery from './pages/Gallery'
+import Reviews from './pages/Reviews'
 import Cart from './components/Cart'
 import { Toaster } from 'react-hot-toast'
 
@@ -17,7 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/about" element={<About />} />
-          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/reviews" element={<Reviews />} />
         </Routes>
       </main>
       <Footer />

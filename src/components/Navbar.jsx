@@ -38,16 +38,31 @@ const Navbar = () => {
         <nav className="nav-links" style={{ display: 'none' }} >
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
           <Link to="/menu" className={`nav-link ${location.pathname === '/menu' ? 'active' : ''}`}>Menu</Link>
-          <Link to="/gallery" className={`nav-link ${location.pathname === '/gallery' ? 'active' : ''}`}>Gallery</Link>
+          <Link to="/reviews" className={`nav-link ${location.pathname === '/reviews' ? 'active' : ''}`}>Reviews</Link>
           <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}>About & Catering</Link>
         </nav>
 
         {/* Desktop action */}
         <div style={{ display: 'none', alignItems: 'center', gap: '1.5rem' }} className="desktop-action">
-          <button onClick={toggleCart} className="relative transition hover:-translate-y-1">
+          <button onClick={toggleCart} className="relative transition hover:-translate-y-1" style={{ padding: '4px' }}>
             <ShoppingBag size={24} color="var(--color-text)" />
             {cartItemCount > 0 && (
-              <span style={{ position: 'absolute', top: -6, right: -6, background: 'var(--color-primary)', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ 
+                position: 'absolute', 
+                top: -4, 
+                right: -4, 
+                background: 'var(--color-primary)', 
+                color: 'white', 
+                fontSize: '0.65rem', 
+                fontWeight: 'bold', 
+                width: '18px', 
+                height: '18px', 
+                borderRadius: '50%', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                lineHeight: 1
+              }}>
                 {cartItemCount}
               </span>
             )}
@@ -57,10 +72,25 @@ const Navbar = () => {
 
         {/* Mobile controls */}
         <div className="mobile-toggle" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={toggleCart} className="relative">
+          <button onClick={toggleCart} className="relative" style={{ padding: '4px' }}>
             <ShoppingBag size={24} color="var(--color-secondary)" />
             {cartItemCount > 0 && (
-              <span style={{ position: 'absolute', top: -6, right: -6, background: 'var(--color-primary)', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ 
+                position: 'absolute', 
+                top: -4, 
+                right: -4, 
+                background: 'var(--color-primary)', 
+                color: 'white', 
+                fontSize: '0.65rem', 
+                fontWeight: 'bold', 
+                width: '18px', 
+                height: '18px', 
+                borderRadius: '50%', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                lineHeight: 1
+              }}>
                 {cartItemCount}
               </span>
             )}
@@ -83,7 +113,7 @@ const Navbar = () => {
         }}>
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/menu" className="nav-link">Menu</Link>
-          <Link to="/gallery" className="nav-link">Gallery</Link>
+          <Link to="/reviews" className="nav-link">Reviews</Link>
           <Link to="/about" className="nav-link">About & Catering</Link>
           <Link to="/menu" className="btn btn-primary mt-2" style={{ textAlign: 'center' }}>Order Now</Link>
         </div>
