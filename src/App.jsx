@@ -8,6 +8,9 @@ import Reviews from './pages/Reviews'
 import Checkout from './pages/Checkout'
 import Payment from './pages/Payment'
 import OrderSuccess from './pages/OrderSuccess'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import AdminDashboard from './pages/AdminDashboard'
 import Cart from './components/Cart'
 import { Toaster } from 'react-hot-toast'
 
@@ -24,6 +27,9 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
       <Footer />

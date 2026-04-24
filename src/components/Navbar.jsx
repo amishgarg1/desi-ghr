@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu as MenuIcon, X, ShoppingBag } from 'lucide-react';
+import { Menu as MenuIcon, X, ShoppingBag, User, LogOut } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { cartItems, toggleCart } = useCartStore();
+  const { user, logout, isAdmin } = useAuthStore();
   const cartItemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
@@ -57,6 +59,16 @@ const Navbar = () => {
               </span>
             )}
           </button>
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              {isAdmin() && <Link to="/admin" className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', borderRadius: '20px' }}>Admin</Link>}
+              <button onClick={() => { logout(); }} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-text-light)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontFamily: 'var(--font-sans)', fontWeight: 500 }}>
+                <User size={16} /> {user.name?.split(' ')[0]}
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="btn btn-primary">Sign In</Link>
+          )}
           <Link to="/menu" className="btn btn-primary">Order Now</Link>
         </div>
 
