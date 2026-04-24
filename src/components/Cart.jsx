@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { X, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -5,18 +6,13 @@ import toast from 'react-hot-toast';
 
 const Cart = () => {
   const { isCartOpen, toggleCart, cartItems, removeFromCart, updateQuantity, clearCart } = useCartStore();
+  const navigate = useNavigate();
   
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   const handleCheckout = () => {
-    toast.success("Order placed successfully! We'll start preparing your food.", {
-      icon: '🍳',
-      duration: 4000
-    });
-    setTimeout(() => {
-      clearCart();
-      toggleCart();
-    }, 1500);
+    toggleCart();
+    navigate('/checkout');
   };
 
   return (

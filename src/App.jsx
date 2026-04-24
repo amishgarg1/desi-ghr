@@ -5,6 +5,9 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import About from './pages/About'
 import Reviews from './pages/Reviews'
+import Checkout from './pages/Checkout'
+import Payment from './pages/Payment'
+import OrderSuccess from './pages/OrderSuccess'
 import Cart from './components/Cart'
 import { Toaster } from 'react-hot-toast'
 
@@ -18,6 +21,9 @@ function App() {
           <Route path="/menu" element={<Menu />} />
           <Route path="/about" element={<About />} />
           <Route path="/reviews" element={<Reviews />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
         </Routes>
       </main>
       <Footer />
