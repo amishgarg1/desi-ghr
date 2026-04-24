@@ -4,6 +4,7 @@ export const useCartStore = create((set) => ({
   cartItems: [],
   isCartOpen: false,
   toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
+  setCartOpen: (open) => set({ isCartOpen: open }),
   addToCart: (item) => set((state) => {
     const existingItem = state.cartItems.find(i => i.name === item.name);
     if (existingItem) {

@@ -44,27 +44,14 @@ const Navbar = () => {
 
         {/* Desktop action */}
         <div style={{ display: 'none', alignItems: 'center', gap: '1.5rem' }} className="desktop-action">
-          <button onClick={toggleCart} className="relative transition hover:-translate-y-1" style={{ padding: '4px' }}>
-            <ShoppingBag size={24} color="var(--color-text)" />
+          <button onClick={toggleCart} className="flex items-center gap-1 transition hover:-translate-y-1" style={{ padding: '6px 12px', background: cartItemCount > 0 ? 'rgba(147, 69, 43, 0.05)' : 'transparent', borderRadius: 'var(--radius-full)' }}>
+            <ShoppingBag size={22} color="var(--color-secondary)" />
             {cartItemCount > 0 && (
               <span style={{ 
-                position: 'absolute', 
-                top: '0', 
-                right: '0', 
-                transform: 'translate(40%, -40%)',
-                background: 'var(--color-primary)', 
-                color: 'white', 
-                fontSize: '0.7rem', 
+                fontSize: '0.9rem', 
                 fontWeight: '700', 
-                width: '18px', 
-                height: '18px', 
-                borderRadius: '50%', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                lineHeight: '0',
-                border: '2px solid white',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                color: 'var(--color-primary)',
+                marginLeft: '4px'
               }}>
                 {cartItemCount}
               </span>
@@ -75,26 +62,14 @@ const Navbar = () => {
 
         {/* Mobile controls */}
         <div className="mobile-toggle" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={toggleCart} className="relative" style={{ padding: '4px' }}>
-            <ShoppingBag size={24} color="var(--color-secondary)" />
+          <button onClick={toggleCart} className="flex items-center gap-1" style={{ padding: '4px 10px', background: cartItemCount > 0 ? 'rgba(147, 69, 43, 0.05)' : 'transparent', borderRadius: 'var(--radius-full)' }}>
+            <ShoppingBag size={22} color="var(--color-secondary)" />
             {cartItemCount > 0 && (
               <span style={{ 
-                position: 'absolute', 
-                top: '0', 
-                right: '0', 
-                transform: 'translate(40%, -40%)',
-                background: 'var(--color-primary)', 
-                color: 'white', 
-                fontSize: '0.7rem', 
+                fontSize: '0.9rem', 
                 fontWeight: '700', 
-                width: '18px', 
-                height: '18px', 
-                borderRadius: '50%', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                lineHeight: '0',
-                border: '2px solid white'
+                color: 'var(--color-primary)',
+                marginLeft: '2px'
               }}>
                 {cartItemCount}
               </span>

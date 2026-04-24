@@ -30,11 +30,13 @@ const combos = [
 const Menu = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const addToCart = useCartStore(state => state.addToCart);
+  const setCartOpen = useCartStore(state => state.setCartOpen);
 
   const categories = ["All", ...Object.keys(menuData), "Combos"];
 
   const handleAddToCart = (item, type = 'item') => {
     addToCart({ name: item });
+    setCartOpen(true);
     toast.success(`${item} added to cart!`);
   };
 
