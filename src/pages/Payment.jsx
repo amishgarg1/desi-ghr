@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CreditCard, Smartphone, Banknote, ShieldCheck, ArrowRight, Lock, Check } from 'lucide-react';
+import { CreditCard, Smartphone, Banknote, ShieldCheck, ArrowRight, Check, Lock } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import toast from 'react-hot-toast';
 
@@ -11,19 +11,13 @@ const Payment = () => {
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const [selectedMethod, setSelectedMethod] = useState('upi');
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  const [cardData, setCardData] = useState({
-    number: '',
-    name: '',
-    expiry: '',
-    cvv: ''
-  });
+  const [cardData, setCardData] = useState({ number: '', name: '', expiry: '', cvv: '' });
 
   const handlePayment = () => {
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
-      toast.success("Order Placed Successfully!");
+      toast.success('Order Placed Successfully! 🎉');
       clearCart();
       navigate('/order-success');
     }, 3000);
@@ -31,219 +25,211 @@ const Payment = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className="pt-40 pb-12 container text-center">
-        <h2 className="heading-lg">No Active Order</h2>
-        <button onClick={() => navigate('/menu')} className="btn btn-primary mt-6 px-8">Return to Menu</button>
+      <div style={{ paddingTop: '10rem', textAlign: 'center' }} className="container">
+        <h2 className="heading-lg">No active order</h2>
+        <button onClick={() => navigate('/menu')} className="btn btn-primary" style={{ marginTop: '1.5rem' }}>Go to Menu</button>
       </div>
     );
   }
 
+  const methods = [
+    { id: 'upi', icon: <Smartphone size={22} />, title: 'UPI Payment', desc: 'Google Pay · PhonePe · Paytm' },
+    { id: 'card', icon: <CreditCard size={22} />, title: 'Card Payment', desc: 'Visa · Mastercard · RuPay' },
+    { id: 'cod', icon: <Banknote size={22} />, title: 'Cash on Delivery', desc: 'Pay when food arrives' },
+  ];
+
   return (
-    <div className="pt-32 pb-24 bg-[#FAF7F2] min-h-screen">
-      <div className="container max-w-4xl">
+    <div style={{ background: 'linear-gradient(135deg, #FDF8F5 0%, #F5EDE6 100%)', minHeight: '100vh', paddingTop: '8rem', paddingBottom: '5rem' }}>
+      <div className="container">
+        
         {/* Progress Stepper */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          <div className="flex items-center gap-2 text-green-600 font-bold">
-            <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm"><Check size={16} /></div>
-            <span>Information</span>
-          </div>
-          <div className="w-12 h-[2px] bg-green-600"></div>
-          <div className="flex items-center gap-2 text-primary font-bold">
-            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm">2</div>
-            <span>Payment</span>
-          </div>
-          <div className="w-12 h-[2px] bg-gray-200"></div>
-          <div className="flex items-center gap-2 text-gray-400">
-            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm">3</div>
-            <span>Success</span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '3.5rem' }}>
+          {[
+            { num: <Check size={16} />, label: 'Information', done: true },
+            { num: '2', label: 'Payment', active: true },
+            { num: '3', label: 'Confirm', active: false }
+          ].map((step, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{
+                  width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: 700, fontSize: '0.875rem',
+                  background: step.done ? '#6ee7b7' : step.active ? 'var(--color-primary)' : 'rgba(0,0,0,0.06)',
+                  color: (step.done || step.active) ? 'white' : 'var(--color-text-light)'
+                }}>{step.num}</div>
+                <span style={{ fontWeight: step.active ? 700 : 400, color: step.active ? 'var(--color-primary)' : step.done ? '#059669' : 'var(--color-text-light)', fontSize: '0.95rem' }}>{step.label}</span>
+              </div>
+              {i < 2 && <div style={{ width: '48px', height: '2px', background: i === 0 ? '#6ee7b7' : 'rgba(0,0,0,0.08)' }} />}
+            </div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          {/* Payment Methods */}
-          <div className="space-y-6">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-[32px] p-8 shadow-xl shadow-primary/5"
-            >
-              <h2 className="heading-sm mb-6">Payment <span className="text-primary">Method</span></h2>
-              
-              <div className="space-y-4">
-                {[
-                  { id: 'upi', icon: <Smartphone />, title: 'UPI Payment', desc: 'Google Pay, PhonePe, Paytm' },
-                  { id: 'card', icon: <CreditCard />, title: 'Card Payment', desc: 'Visa, Mastercard, RuPay' },
-                  { id: 'cod', icon: <Banknote />, title: 'Cash on Delivery', desc: 'Pay when food arrives' }
-                ].map((method) => (
-                  <div 
-                    key={method.id}
-                    onClick={() => setSelectedMethod(method.id)}
-                    className={`relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all ${selectedMethod === method.id ? 'border-primary bg-primary/5' : 'border-gray-50 hover:border-primary/20'}`}
-                  >
-                    <div className={`p-3 rounded-xl ${selectedMethod === method.id ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>
-                      {method.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className={`font-bold ${selectedMethod === method.id ? 'text-secondary' : 'text-gray-600'}`}>{method.title}</h3>
-                      <p className="text-xs text-gray-400">{method.desc}</p>
-                    </div>
-                    {selectedMethod === method.id && (
-                      <motion.div layoutId="check" className="text-primary">
-                        <CheckCircle2Icon size={24} />
-                      </motion.div>
-                    )}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
+          
+          {/* Left: Payment Methods */}
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+            style={{ background: 'white', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 24px 64px rgba(147,69,43,0.08)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            
+            <div>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: 'var(--color-secondary)', marginBottom: '0.3rem' }}>
+                Choose <span style={{ color: 'var(--color-primary)' }}>Payment</span>
+              </h2>
+              <p style={{ color: 'var(--color-text-light)', fontSize: '0.9rem' }}>Select your preferred payment method</p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {methods.map(method => (
+                <div key={method.id} onClick={() => setSelectedMethod(method.id)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.1rem 1.25rem',
+                    borderRadius: '16px', border: `2px solid ${selectedMethod === method.id ? 'var(--color-primary)' : '#eee'}`,
+                    background: selectedMethod === method.id ? 'rgba(147,69,43,0.04)' : 'white',
+                    cursor: 'pointer', transition: 'all 0.2s'
+                  }}>
+                  <div style={{
+                    width: '44px', height: '44px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: selectedMethod === method.id ? 'var(--color-primary)' : '#f5f5f5',
+                    color: selectedMethod === method.id ? 'white' : '#aaa', flexShrink: 0
+                  }}>
+                    {method.icon}
                   </div>
-                ))}
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="p-6 bg-secondary rounded-[32px] text-white flex items-center justify-between"
-            >
-              <div>
-                <p className="text-sm text-white/60">Total Amount</p>
-                <p className="text-3xl font-serif italic text-primary-light font-bold">₹{total}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">Secure Transaction</p>
-                <div className="flex gap-2 justify-end opacity-50 grayscale hover:grayscale-0 transition-all">
-                  <CreditCard size={20} />
-                  <Smartphone size={20} />
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: 700, fontSize: '0.95rem', color: selectedMethod === method.id ? 'var(--color-secondary)' : '#333' }}>{method.title}</p>
+                    <p style={{ fontSize: '0.8rem', color: '#aaa' }}>{method.desc}</p>
+                  </div>
+                  <div style={{
+                    width: '22px', height: '22px', borderRadius: '50%',
+                    border: `2.5px solid ${selectedMethod === method.id ? 'var(--color-primary)' : '#ddd'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    {selectedMethod === method.id && <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-primary)' }} />}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
+              ))}
+            </div>
 
-          {/* Payment Detail Details */}
-          <div className="space-y-6">
+            {/* Total Box */}
+            <div style={{ background: 'var(--color-secondary)', borderRadius: '20px', padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+              <div>
+                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Payable</p>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: 700, color: 'var(--color-accent)', lineHeight: 1.2 }}>₹{total}</p>
+              </div>
+              <div style={{ textAlign: 'right', opacity: 0.5 }}>
+                <ShieldCheck size={28} color="white" />
+                <p style={{ fontSize: '0.65rem', color: 'white', marginTop: '4px' }}>SSL Secured</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right: Payment Detail Panel */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <AnimatePresence mode="wait">
               {selectedMethod === 'card' ? (
-                <motion.div 
-                  key="card-details"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-white rounded-[32px] p-8 shadow-xl shadow-primary/5 space-y-6"
-                >
-                  {/* Virtual Card Visual */}
-                  <div className="aspect-[1.6/1] w-full bg-gradient-to-br from-secondary to-primary p-8 rounded-2xl text-white flex flex-col justify-between shadow-lg relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                    <div className="flex justify-between items-start">
-                      <div className="w-12 h-8 bg-yellow-400/80 rounded-md opacity-80"></div>
-                      <ShieldCheck size={28} className="opacity-50" />
+                <motion.div key="card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                  style={{ background: 'white', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 24px 64px rgba(147,69,43,0.08)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  
+                  {/* Virtual Card */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%)',
+                    borderRadius: '20px', padding: '1.75rem', color: 'white',
+                    aspectRatio: '1.7 / 1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                    position: 'relative', overflow: 'hidden', boxShadow: '0 20px 40px rgba(78,42,29,0.3)'
+                  }}>
+                    <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '160px', height: '160px', background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+                    <div style={{ position: 'absolute', bottom: '-60px', left: '-30px', width: '200px', height: '200px', background: 'rgba(255,255,255,0.03)', borderRadius: '50%' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+                      <div style={{ width: '44px', height: '30px', background: 'rgba(255,215,0,0.7)', borderRadius: '6px' }} />
+                      <ShieldCheck size={22} style={{ opacity: 0.4 }} />
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-xs tracking-[4px] uppercase text-white/50">Card Number</p>
-                      <p className="text-2xl font-mono tracking-widest">{cardData.number || 'XXXX XXXX XXXX XXXX'}</p>
+                    <div style={{ position: 'relative' }}>
+                      <p style={{ fontSize: '0.65rem', letterSpacing: '3px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '4px' }}>Card Number</p>
+                      <p style={{ fontFamily: 'monospace', fontSize: '1.3rem', letterSpacing: '4px', fontWeight: 600 }}>
+                        {cardData.number || 'XXXX XXXX XXXX XXXX'}
+                      </p>
                     </div>
-                    <div className="flex justify-between items-end">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
                       <div>
-                        <p className="text-[10px] uppercase text-white/50">Card Holder</p>
-                        <p className="font-bold uppercase tracking-wider">{cardData.name || 'FULL NAME'}</p>
+                        <p style={{ fontSize: '0.6rem', letterSpacing: '2px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Card Holder</p>
+                        <p style={{ fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px' }}>{cardData.name || 'FULL NAME'}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-[10px] uppercase text-white/50">Expires</p>
-                        <p className="font-bold">{cardData.expiry || 'MM/YY'}</p>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: '0.6rem', letterSpacing: '2px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Expires</p>
+                        <p style={{ fontWeight: 700, fontSize: '0.9rem', marginTop: '2px' }}>{cardData.expiry || 'MM/YY'}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-400 ml-1">Card Holder Name</label>
-                      <input 
-                        className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all"
-                        placeholder="John Doe"
-                        onChange={(e) => setCardData({...cardData, name: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-400 ml-1">Card Number</label>
-                      <input 
-                        className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all"
-                        placeholder="0000 0000 0000 0000"
-                        maxLength={19}
-                        onChange={(e) => setCardData({...cardData, number: e.target.value})}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-400 ml-1">Expiry</label>
-                        <input 
-                          className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all"
-                          placeholder="MM/YY"
-                          onChange={(e) => setCardData({...cardData, expiry: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-400 ml-1">CVV</label>
-                        <input 
-                          className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all"
-                          placeholder="000"
-                          type="password"
-                        />
-                      </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <input placeholder="Card Holder Name" onChange={e => setCardData({...cardData, name: e.target.value})}
+                      style={fieldStyle} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
+                    <input placeholder="0000 0000 0000 0000" maxLength={19} onChange={e => setCardData({...cardData, number: e.target.value})}
+                      style={fieldStyle} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <input placeholder="MM / YY" onChange={e => setCardData({...cardData, expiry: e.target.value})}
+                        style={fieldStyle} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
+                      <input placeholder="CVV" type="password" maxLength={3}
+                        style={fieldStyle} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
                     </div>
                   </div>
                 </motion.div>
               ) : (
-                <motion.div 
-                  key="other-details"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="bg-white rounded-[32px] p-8 shadow-xl shadow-primary/5 text-center space-y-6"
-                >
-                  <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    {selectedMethod === 'upi' ? <Smartphone size={40} className="text-primary" /> : <Banknote size={40} className="text-primary" />}
+                <motion.div key="other" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                  style={{ background: 'white', borderRadius: '32px', padding: '3rem', boxShadow: '0 24px 64px rgba(147,69,43,0.08)', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
+                  <div style={{ width: '90px', height: '90px', background: 'rgba(147,69,43,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)' }}>
+                    {selectedMethod === 'upi' ? <Smartphone size={40} /> : <Banknote size={40} />}
                   </div>
-                  <h3 className="text-xl font-bold">
+                  <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', color: 'var(--color-secondary)' }}>
                     {selectedMethod === 'upi' ? 'Pay via UPI' : 'Cash on Delivery'}
                   </h3>
-                  <p className="text-gray-500">
-                    {selectedMethod === 'upi' 
-                      ? 'You will be redirected to your UPI app to complete the payment.' 
-                      : 'Please keep exactly ₹' + total + ' ready to pay our delivery partner.'}
+                  <p style={{ color: 'var(--color-text-light)', maxWidth: '280px', lineHeight: 1.7 }}>
+                    {selectedMethod === 'upi'
+                      ? 'You will be redirected to your UPI app to complete the payment securely.'
+                      : `Please keep ₹${total} ready to pay our delivery partner at your door.`}
                   </p>
-                  <div className="p-4 bg-gray-50 rounded-2xl flex items-center justify-center gap-3">
-                    <Lock size={16} className="text-green-600" />
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">End-to-End Encrypted</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', background: '#f9fafb', borderRadius: '12px' }}>
+                    <Lock size={14} color="#059669" />
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#aaa', textTransform: 'uppercase', letterSpacing: '1.5px' }}>256-bit SSL Encrypted</span>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <button 
-              onClick={handlePayment}
-              disabled={isProcessing}
-              className="btn btn-primary w-full py-5 rounded-2xl text-lg relative overflow-hidden group"
-            >
+            <button onClick={handlePayment} disabled={isProcessing}
+              className="btn btn-primary"
+              style={{ padding: '1.25rem', fontSize: '1.05rem', borderRadius: '18px', width: '100%', justifyContent: 'center', opacity: isProcessing ? 0.8 : 1 }}>
               {isProcessing ? (
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Processing...</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '22px', height: '22px', border: '3px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
+                  Processing Payment...
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  <span>Confirm Order</span>
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </div>
+                <>Confirm & Place Order <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} /></>
               )}
             </button>
+
+            <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+              <ShieldCheck size={14} color="#059669" /> Secure, encrypted transaction
+            </div>
           </div>
         </div>
       </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 };
 
-const CheckCircle2Icon = ({ size }) => (
-  <div style={{ width: size, height: size }} className="bg-primary rounded-full flex items-center justify-center text-white">
-    <Check size={size * 0.6} strokeWidth={4} />
-  </div>
-);
+const fieldStyle = {
+  width: '100%',
+  padding: '0.9rem 1.25rem',
+  borderRadius: '14px',
+  border: '2px solid #eee',
+  background: '#FAFAFA',
+  fontSize: '0.95rem',
+  color: 'var(--color-text)',
+  outline: 'none',
+  transition: 'border-color 0.2s',
+  fontFamily: 'var(--font-sans)'
+};
 
 export default Payment;

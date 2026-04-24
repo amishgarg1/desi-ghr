@@ -1,240 +1,182 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, MapPin, Phone, Mail, ArrowRight, ShoppingBag, ChevronRight, CreditCard } from 'lucide-react';
+import { User, MapPin, Phone, Mail, ChevronRight, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { cartItems } = useCartStore();
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    pincode: ''
-  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate('/payment');
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', pincode: '' });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleSubmit = (e) => { e.preventDefault(); navigate('/payment'); };
 
   if (cartItems.length === 0) {
     return (
-      <div className="pt-40 pb-12 container text-center">
-        <ShoppingBag size={80} className="text-primary opacity-10 mb-6 mx-auto" />
+      <div style={{ paddingTop: '10rem', paddingBottom: '5rem', textAlign: 'center' }} className="container">
+        <ShoppingBag size={80} style={{ opacity: 0.1, margin: '0 auto 1.5rem', color: 'var(--color-primary)' }} />
         <h2 className="heading-lg">Your cart is empty</h2>
-        <p className="text-lg mb-8 text-gray-500">Add some delicious homemade food before checking out!</p>
-        <button onClick={() => navigate('/menu')} className="btn btn-primary px-12">Go to Menu</button>
+        <p style={{ marginBottom: '2rem', color: 'var(--color-text-light)', fontSize: '1.1rem' }}>Add some delicious food before checking out!</p>
+        <button onClick={() => navigate('/menu')} className="btn btn-primary">Go to Menu</button>
       </div>
     );
   }
 
   return (
-    <div className="pt-32 pb-24 bg-[#FAF7F2] min-h-screen">
+    <div style={{ background: 'linear-gradient(135deg, #FDF8F5 0%, #F5EDE6 100%)', minHeight: '100vh', paddingTop: '8rem', paddingBottom: '5rem' }}>
       <div className="container">
+        
         {/* Progress Stepper */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          <div className="flex items-center gap-2 text-primary font-bold">
-            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm">1</div>
-            <span>Information</span>
-          </div>
-          <div className="w-12 h-[2px] bg-gray-200"></div>
-          <div className="flex items-center gap-2 text-gray-400">
-            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm">2</div>
-            <span>Payment</span>
-          </div>
-          <div className="w-12 h-[2px] bg-gray-200"></div>
-          <div className="flex items-center gap-2 text-gray-400">
-            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm">3</div>
-            <span>Success</span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '3.5rem' }}>
+          {[{ num: '1', label: 'Information', active: true }, { num: '2', label: 'Payment', active: false }, { num: '3', label: 'Confirm', active: false }].map((step, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{
+                  width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: 700, fontSize: '0.875rem',
+                  background: step.active ? 'var(--color-primary)' : 'rgba(0,0,0,0.06)',
+                  color: step.active ? 'white' : 'var(--color-text-light)'
+                }}>{step.num}</div>
+                <span style={{ fontWeight: step.active ? 700 : 400, color: step.active ? 'var(--color-primary)' : 'var(--color-text-light)', fontSize: '0.95rem' }}>{step.label}</span>
+              </div>
+              {i < 2 && <div style={{ width: '48px', height: '2px', background: 'rgba(0,0,0,0.08)' }} />}
+            </div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Main Form Area */}
-          <div className="lg:col-span-7">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-[32px] p-8 md:p-12 shadow-xl shadow-primary/5"
-            >
-              <div className="mb-10">
-                <h1 className="heading-md mb-2">Delivery <span className="text-primary">Details</span></h1>
-                <p className="text-gray-500">Please provide your contact and delivery information.</p>
-              </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '2rem', alignItems: 'start' }}>
+          
+          {/* Form Card */}
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+            style={{ background: 'white', borderRadius: '32px', padding: '3rem', boxShadow: '0 24px 64px rgba(147,69,43,0.08)' }}>
+            <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', marginBottom: '0.5rem', color: 'var(--color-secondary)' }}>
+              Delivery <span style={{ color: 'var(--color-primary)' }}>Details</span>
+            </h1>
+            <p style={{ color: 'var(--color-text-light)', marginBottom: '2.5rem' }}>We'll use this info to deliver your order right to your door.</p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Full Name</label>
-                    <div className="relative group">
-                      <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" />
-                      <input 
-                        required
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="John Doe"
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-gray-300"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Phone Number</label>
-                    <div className="relative group">
-                      <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" />
-                      <input 
-                        required
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="+91 9876543210"
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-gray-300"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Email Address</label>
-                  <div className="relative group">
-                    <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" />
-                    <input 
-                      required
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="johndoe@example.com"
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-gray-300"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Delivery Address</label>
-                  <div className="relative group">
-                    <MapPin size={18} className="absolute left-4 top-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-                    <textarea 
-                      required
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      rows="3"
-                      placeholder="Flat, House no., Building, Company, Apartment"
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-gray-300 resize-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">City</label>
-                    <input 
-                      required
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      placeholder="Your City"
-                      className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-gray-300"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Pincode</label>
-                    <input 
-                      required
-                      name="pincode"
-                      value={formData.pincode}
-                      onChange={handleChange}
-                      placeholder="000000"
-                      className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/50 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-gray-300"
-                    />
-                  </div>
-                </div>
-
-                <button 
-                  type="submit" 
-                  className="btn btn-primary w-full py-5 rounded-2xl text-lg group"
-                >
-                  Continue to Payment 
-                  <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-              </form>
-            </motion.div>
-          </div>
-
-          {/* Side Summary Area */}
-          <div className="lg:col-span-5 sticky top-32">
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-secondary rounded-[32px] p-8 md:p-10 text-white shadow-2xl shadow-secondary/20 overflow-hidden relative"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               
-              <h3 className="heading-sm text-white mb-8">Order <span className="text-primary-light">Summary</span></h3>
-              
-              <div className="space-y-6 mb-8 max-h-[300px] overflow-y-auto pr-4 custom-scrollbar">
-                {cartItems.map(item => (
-                  <div key={item.name} className="flex justify-between items-start group">
-                    <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center font-bold text-sm">
-                        {item.quantity}x
-                      </div>
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-xs text-white/50">Fresh & Homemade</p>
-                      </div>
-                    </div>
-                    <p className="font-bold text-primary-light">₹{item.price * item.quantity}</p>
+              {/* Name + Phone Row */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#aaa' }}>Full Name</label>
+                  <div style={{ position: 'relative' }}>
+                    <User size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#ccc' }} />
+                    <input required name="name" value={formData.name} onChange={handleChange} placeholder="Rahul Sharma"
+                      style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
                   </div>
-                ))}
-              </div>
-
-              <div className="space-y-4 pt-8 border-t border-white/10">
-                <div className="flex justify-between text-white/70">
-                  <span>Subtotal</span>
-                  <span className="font-bold">₹{total}</span>
                 </div>
-                <div className="flex justify-between text-white/70">
-                  <span>Delivery Charge</span>
-                  <span className="text-green-400 font-bold">FREE</span>
-                </div>
-                <div className="flex justify-between items-center text-2xl pt-4 border-t border-white/10 font-serif">
-                  <span className="font-normal italic">Grand Total</span>
-                  <span className="text-primary-light font-bold">₹{total}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#aaa' }}>Phone Number</label>
+                  <div style={{ position: 'relative' }}>
+                    <Phone size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#ccc' }} />
+                    <input required name="phone" value={formData.phone} onChange={handleChange} placeholder="+91 98765 43210"
+                      style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-10 p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
-                <div className="bg-primary/20 p-3 rounded-xl">
-                  <CreditCard className="text-primary-light" size={24} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#aaa' }}>Email Address</label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#ccc' }} />
+                  <input required type="email" name="email" value={formData.email} onChange={handleChange} placeholder="rahul@example.com"
+                    style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
                 </div>
-                <p className="text-xs text-white/70 leading-relaxed">
-                  Your order is protected by our <span className="text-white font-bold">Freshness Guarantee</span>. If you're not satisfied, we'll make it right.
-                </p>
               </div>
-            </motion.div>
-          </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#aaa' }}>Delivery Address</label>
+                <div style={{ position: 'relative' }}>
+                  <MapPin size={16} style={{ position: 'absolute', left: '1rem', top: '1.1rem', color: '#ccc' }} />
+                  <textarea required name="address" value={formData.address} onChange={handleChange} rows="3" placeholder="Street, Area, Colony..."
+                    style={{ ...inputStyle, paddingTop: '1rem', paddingBottom: '1rem', resize: 'none', lineHeight: '1.5' }}
+                    onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#aaa' }}>City</label>
+                  <input required name="city" value={formData.city} onChange={handleChange} placeholder="Indore"
+                    style={{ ...inputStyle, paddingLeft: '1.25rem' }} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#aaa' }}>Pincode</label>
+                  <input required name="pincode" value={formData.pincode} onChange={handleChange} placeholder="452001"
+                    style={{ ...inputStyle, paddingLeft: '1.25rem' }} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#eee'} />
+                </div>
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem', padding: '1.1rem', fontSize: '1rem', justifyContent: 'center', borderRadius: '16px' }}>
+                Continue to Payment <ChevronRight size={20} style={{ marginLeft: '0.5rem' }} />
+              </button>
+            </form>
+          </motion.div>
+
+          {/* Order Summary Card */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}
+            style={{ background: 'var(--color-secondary)', borderRadius: '32px', padding: '2.5rem', color: 'white', boxShadow: '0 32px 80px rgba(78,42,29,0.2)', position: 'sticky', top: '7rem', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', background: 'rgba(255,255,255,0.03)', borderRadius: '50%' }} />
+            
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: 'white', marginBottom: '2rem', fontWeight: 600 }}>
+              Your <span style={{ color: 'var(--color-accent)' }}>Order</span>
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '260px', overflowY: 'auto' }}>
+              {cartItems.map(item => (
+                <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div style={{ width: '42px', height: '42px', background: 'rgba(255,255,255,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0 }}>
+                    {item.quantity}x
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontWeight: 600, fontSize: '0.95rem', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</p>
+                    <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Freshly made</p>
+                  </div>
+                  <p style={{ fontWeight: 700, color: 'var(--color-accent)', flexShrink: 0 }}>₹{item.price * item.quantity}</p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
+                <span>Subtotal</span><span style={{ color: 'white', fontWeight: 600 }}>₹{total}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
+                <span>Delivery</span><span style={{ color: '#6ee7b7', fontWeight: 600 }}>FREE 🎉</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', alignItems: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1.2rem', color: 'white' }}>Grand Total</span>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: 700, color: 'var(--color-accent)' }}>₹{total}</span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.1)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
+              🔒 Secure Checkout &nbsp;·&nbsp; Fresh Guarantee &nbsp;·&nbsp; Fast Delivery
+            </div>
+          </motion.div>
         </div>
       </div>
-      
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); borderRadius: 10px; }
-      `}</style>
     </div>
   );
+};
+
+const inputStyle = {
+  width: '100%',
+  paddingLeft: '2.75rem',
+  paddingRight: '1.25rem',
+  paddingTop: '0.875rem',
+  paddingBottom: '0.875rem',
+  borderRadius: '14px',
+  border: '2px solid #eee',
+  background: '#FAFAFA',
+  fontSize: '0.95rem',
+  color: 'var(--color-text)',
+  outline: 'none',
+  transition: 'border-color 0.2s, background 0.2s',
+  fontFamily: 'var(--font-sans)'
 };
 
 export default Checkout;
