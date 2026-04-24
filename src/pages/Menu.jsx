@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Coffee, Utensils, Award } from 'lucide-react';
+import { Coffee, Utensils, Award, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useCartStore } from '../store/cartStore';
+import toast from 'react-hot-toast';
 
 const menuData = {
   "Breakfast & Snacks": [
@@ -26,8 +29,14 @@ const combos = [
 
 const Menu = () => {
   const [activeCategory, setActiveCategory] = useState("All");
+  const addToCart = useCartStore(state => state.addToCart);
 
   const categories = ["All", ...Object.keys(menuData), "Combos"];
+
+  const handleAddToCart = (item, type = 'item') => {
+    addToCart({ name: item });
+    toast.success(`${item} added to cart!`);
+  };
 
   return (
     <div className="pt-24 pb-12">
@@ -66,32 +75,59 @@ const Menu = () => {
             if (activeCategory !== "All" && activeCategory !== category) return null;
             
             return (
-              <div key={category} className="menu-category animate-fade-in">
+              <motion.div 
+                key={category} 
+                className="menu-category"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 <div className="flex items-center gap-1 mb-4 border-b border-gray-200 pb-2">
                   <Utensils className="text-primary" size={24} />
                   <h2 className="heading-md" style={{ margin: 0 }}>{category}</h2>
                 </div>
                 <div className="menu-grid">
                   {items.map((item, index) => (
-                    <div key={index} className="menu-item">
+                    <motion.div 
+                      key={index} 
+                      className="menu-item group"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
                       <span style={{ fontWeight: '500', fontSize: '1.1rem' }}>{item}</span>
-                    </div>
+                      <button 
+                        onClick={() => handleAddToCart(item)}
+                        className="p-2 rounded-full bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ background: 'rgba(147, 69, 43, 0.1)' }}
+                      >
+                        <Plus size={20} />
+                      </button>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
 
           {/* Combos */}
           {(activeCategory === "All" || activeCategory === "Combos") && (
-            <div className="menu-category animate-fade-in delay-100">
+            <motion.div 
+              className="menu-category"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               <div className="flex items-center gap-1 mb-4 border-b border-gray-200 pb-2">
                 <Award className="text-primary" size={24} />
                 <h2 className="heading-md" style={{ margin: 0 }}>Special Combos</h2>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 {combos.map((combo, index) => (
-                  <div key={index} className="card combo-card">
+                  <motion.div 
+                    key={index} 
+                    className="card combo-card"
+                    whileHover={{ y: -5 }}
+                  >
                     <h3 className="heading-sm text-primary mb-2">Combo {index + 1}</h3>
                     <p className="text-sm flex-1">A perfect, fulfilling meal to satisfy your hunger.</p>
                     <ul>
@@ -99,10 +135,17 @@ const Menu = () => {
                         <li key={i}>{item}</li>
                       ))}
                     </ul>
-                  </div>
+                    <button 
+                      onClick={() => handleAddToCart(`Combo ${index + 1}`)}
+                      className="btn btn-outline mt-4 w-full justify-center"
+                      style={{ padding: '0.5rem' }}
+                    >
+                      <Plus size={16} /> Add to Order
+                    </button>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

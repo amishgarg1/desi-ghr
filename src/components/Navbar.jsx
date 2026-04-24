@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu as MenuIcon, X } from 'lucide-react';
+import { Menu as MenuIcon, X, ShoppingBag } from 'lucide-react';
+import { useCartStore } from '../store/cartStore';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { cartItems, toggleCart } = useCartStore();
+  const cartItemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,23 +37,40 @@ const Navbar = () => {
         {/* Desktop Nav */}
         <nav className="nav-links" style={{ display: 'none' }} >
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
-          <Link to="/menu" className={`nav-link ${location.pathname === '/menu' ? 'active' : ''}`}>Our Menu</Link>
-          <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}>Catering & About</Link>
+          <Link to="/menu" className={`nav-link ${location.pathname === '/menu' ? 'active' : ''}`}>Menu</Link>
+          <Link to="/gallery" className={`nav-link ${location.pathname === '/gallery' ? 'active' : ''}`}>Gallery</Link>
+          <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}>About & Catering</Link>
         </nav>
 
         {/* Desktop action */}
-        <div style={{ display: 'none' }} className="desktop-action">
+        <div style={{ display: 'none', alignItems: 'center', gap: '1.5rem' }} className="desktop-action">
+          <button onClick={toggleCart} className="relative transition hover:-translate-y-1">
+            <ShoppingBag size={24} color="var(--color-text)" />
+            {cartItemCount > 0 && (
+              <span style={{ position: 'absolute', top: -6, right: -6, background: 'var(--color-primary)', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {cartItemCount}
+              </span>
+            )}
+          </button>
           <Link to="/menu" className="btn btn-primary">Order Now</Link>
         </div>
 
-        {/* Mobile menu toggle */}
-        <button 
-          className="mobile-toggle" 
-          style={{ display: 'block' }}
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={28} color="var(--color-secondary)" /> : <MenuIcon size={28} color="var(--color-secondary)" />}
-        </button>
+        {/* Mobile controls */}
+        <div className="mobile-toggle" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button onClick={toggleCart} className="relative">
+            <ShoppingBag size={24} color="var(--color-secondary)" />
+            {cartItemCount > 0 && (
+              <span style={{ position: 'absolute', top: -6, right: -6, background: 'var(--color-primary)', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {cartItemCount}
+              </span>
+            )}
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={28} color="var(--color-secondary)" /> : <MenuIcon size={28} color="var(--color-secondary)" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Nav */}
@@ -62,8 +82,9 @@ const Navbar = () => {
           boxShadow: 'var(--shadow-md)'
         }}>
           <Link to="/" className="nav-link">Home</Link>
-          <Link to="/menu" className="nav-link">Our Menu</Link>
-          <Link to="/about" className="nav-link">Catering & About</Link>
+          <Link to="/menu" className="nav-link">Menu</Link>
+          <Link to="/gallery" className="nav-link">Gallery</Link>
+          <Link to="/about" className="nav-link">About & Catering</Link>
           <Link to="/menu" className="btn btn-primary mt-2" style={{ textAlign: 'center' }}>Order Now</Link>
         </div>
       )}
