@@ -5,7 +5,7 @@ import { ShoppingBag, Utensils, TrendingUp, CheckCircle, Clock, Truck, X, Plus, 
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
 
-const API = 'http://localhost:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const statusColors = {
   pending: '#f59e0b',

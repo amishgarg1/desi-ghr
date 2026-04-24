@@ -9,7 +9,20 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors({ origin: ['http://localhost:5173', 'https://desi-ghr.vercel.app'], credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    const allowed = [
+      'http://localhost:5173',
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+    if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
