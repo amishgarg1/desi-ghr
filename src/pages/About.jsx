@@ -43,8 +43,8 @@ const About = () => {
             <div className="flex-1 text-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
               <h3 className="heading-md mb-2">Book Now</h3>
               <p className="text-sm mb-4">Call us to discuss your event requirements and customize your menu.</p>
-              <a href="tel:7023800696" className="btn btn-primary w-full justify-center" style={{ fontSize: '1.2rem' }}>
-                <Phone size={24} /> 7023800696
+              <a href="tel:8655205735" className="btn btn-primary w-full justify-center" style={{ fontSize: '1.2rem' }}>
+                <Phone size={24} /> 86552 05735
               </a>
             </div>
           </div>
@@ -81,7 +81,7 @@ const About = () => {
               <Phone size={32} />
             </div>
             <h3 className="heading-sm">Call Us</h3>
-            <p className="text-lg font-medium">7023800696</p>
+            <p className="text-lg font-medium">86552 05735</p>
             <p className="text-sm text-light mt-1">Available 9 AM to 10 PM</p>
           </div>
           

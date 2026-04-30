@@ -41,7 +41,7 @@ const Footer = () => {
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Phone size={20} color="var(--color-accent)" />
-                <a href="tel:7023800696">7023800696</a>
+                <a href="tel:8655205735">86552 05735</a>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Camera size={20} color="var(--color-accent)" />
