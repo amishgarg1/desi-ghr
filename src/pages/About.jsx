@@ -90,7 +90,7 @@ const About = () => {
               <Camera size={32} />
             </div>
             <h3 className="heading-sm">Follow Us</h3>
-            <p className="text-lg font-medium">@desighr</p>
+            <a href="https://www.instagram.com/desi_ghr" target="_blank" rel="noreferrer" className="text-lg font-medium" style={{ color: 'var(--color-primary)' }}>@desi_ghr</a>
             <p className="text-sm text-light mt-1">Stay updated with our latest offers</p>
           </div>
         </div>

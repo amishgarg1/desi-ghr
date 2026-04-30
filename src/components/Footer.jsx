@@ -45,7 +45,7 @@ const Footer = () => {
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Camera size={20} color="var(--color-accent)" />
-                <a href="https://instagram.com/desighr" target="_blank" rel="noreferrer">@desighr</a>
+                <a href="https://www.instagram.com/desi_ghr" target="_blank" rel="noreferrer">@desi_ghr</a>
               </li>
             </ul>
           </div>
