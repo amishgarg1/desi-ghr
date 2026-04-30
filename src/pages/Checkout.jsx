@@ -11,7 +11,11 @@ const Checkout = () => {
 
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', pincode: '' });
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-  const handleSubmit = (e) => { e.preventDefault(); navigate('/payment'); };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('checkoutInfo', JSON.stringify(formData));
+    navigate('/payment');
+  };
 
   if (cartItems.length === 0) {
     return (

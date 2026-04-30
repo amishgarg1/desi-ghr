@@ -1,26 +1,111 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CreditCard, Smartphone, Banknote, ShieldCheck, ArrowRight, Check, Lock } from 'lucide-react';
+import { CreditCard, Smartphone, Banknote, ShieldCheck, ArrowRight, Check, Lock, MessageCircle } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const OWNER_WHATSAPP = '918655205735'; // Owner's WhatsApp number
 
 const Payment = () => {
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCartStore();
+  const { token } = useAuthStore();
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
   const [selectedMethod, setSelectedMethod] = useState('upi');
   const [isProcessing, setIsProcessing] = useState(false);
   const [cardData, setCardData] = useState({ number: '', name: '', expiry: '', cvv: '' });
 
-  const handlePayment = () => {
+  // Read checkout info saved by Checkout.jsx
+  const checkoutInfoRaw = sessionStorage.getItem('checkoutInfo');
+  const customerInfo = checkoutInfoRaw ? JSON.parse(checkoutInfoRaw) : null;
+
+  // Build WhatsApp message for the OWNER
+  const buildOwnerWhatsAppMsg = (orderId) => {
+    const itemList = cartItems
+      .map(i => `  • ${i.quantity}x ${i.name} — ₹${i.price * i.quantity}`)
+      .join('\n');
+
+    return `🍛 *New Order Received — Desi Ghr!*\n\n` +
+      `📋 *Order ID:* ${orderId}\n\n` +
+      `👤 *Customer:* ${customerInfo?.name}\n` +
+      `📞 *Phone:* ${customerInfo?.phone}\n` +
+      `📧 *Email:* ${customerInfo?.email}\n\n` +
+      `📦 *Items Ordered:*\n${itemList}\n\n` +
+      `💰 *Total: ₹${total}*\n` +
+      `💳 *Payment:* ${selectedMethod.toUpperCase()}\n\n` +
+      `🏠 *Delivery Address:*\n` +
+      `${customerInfo?.address},\n${customerInfo?.city} - ${customerInfo?.pincode}\n\n` +
+      `⏰ Please confirm & prepare the order!`;
+  };
+
+  // Build WhatsApp message for the CUSTOMER (confirmation)
+  const buildCustomerWhatsAppMsg = (orderId) => {
+    const itemList = cartItems
+      .map(i => `  • ${i.quantity}x ${i.name} — ₹${i.price * i.quantity}`)
+      .join('\n');
+
+    return `✅ *Order Confirmed — Desi Ghr!*\n\n` +
+      `Hello *${customerInfo?.name}* 🙏\n\n` +
+      `Your order has been placed successfully!\n\n` +
+      `📋 *Order ID:* ${orderId}\n\n` +
+      `🍽️ *Your Items:*\n${itemList}\n\n` +
+      `💰 *Total: ₹${total}*\n` +
+      `📍 *Delivery to:* ${customerInfo?.city}\n\n` +
+      `⏱ Estimated time: *30–45 minutes*\n\n` +
+      `Thank you for ordering from Desi Ghr! 🏠❤️\n` +
+      `_Ghar Jaisa Swaad, Dil Se Banaa_`;
+  };
+
+  const handlePayment = async () => {
+    if (!customerInfo) {
+      toast.error('Please fill delivery details first!');
+      navigate('/checkout');
+      return;
+    }
+
     setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      toast.success('Order Placed Successfully! 🎉');
+
+    try {
+      // 1. Save order to MongoDB
+      const res = await fetch(`${API}/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          customerInfo,
+          items: cartItems.map(i => ({ name: i.name, price: i.price, quantity: i.quantity })),
+          total,
+          paymentMethod: selectedMethod,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Order failed');
+
+      const orderId = data._id?.slice(-6).toUpperCase() || 'XXXXXX';
+
+      // 2. Open WhatsApp to owner with full order details
+      const ownerMsg = encodeURIComponent(buildOwnerWhatsAppMsg(orderId));
+      window.open(`https://wa.me/${OWNER_WHATSAPP}?text=${ownerMsg}`, '_blank');
+
+      // 3. Clear cart & navigate
       clearCart();
-      navigate('/order-success');
-    }, 3000);
+      sessionStorage.removeItem('checkoutInfo');
+      toast.success('Order placed! Opening WhatsApp... 🎉', { duration: 4000 });
+
+      // Brief delay so user sees the success toast before redirect
+      setTimeout(() => navigate('/order-success'), 800);
+
+    } catch (err) {
+      toast.error(err.message || 'Payment failed. Please try again.');
+      setIsProcessing(false);
+    }
   };
 
   if (cartItems.length === 0) {
@@ -33,15 +118,15 @@ const Payment = () => {
   }
 
   const methods = [
-    { id: 'upi', icon: <Smartphone size={22} />, title: 'UPI Payment', desc: 'Google Pay · PhonePe · Paytm' },
-    { id: 'card', icon: <CreditCard size={22} />, title: 'Card Payment', desc: 'Visa · Mastercard · RuPay' },
-    { id: 'cod', icon: <Banknote size={22} />, title: 'Cash on Delivery', desc: 'Pay when food arrives' },
+    { id: 'upi',  icon: <Smartphone size={22} />, title: 'UPI Payment',       desc: 'Google Pay · PhonePe · Paytm' },
+    { id: 'card', icon: <CreditCard size={22} />, title: 'Card Payment',       desc: 'Visa · Mastercard · RuPay' },
+    { id: 'cod',  icon: <Banknote size={22} />,   title: 'Cash on Delivery',   desc: 'Pay when food arrives' },
   ];
 
   return (
     <div style={{ background: 'linear-gradient(135deg, #FDF8F5 0%, #F5EDE6 100%)', minHeight: '100vh', paddingTop: '8rem', paddingBottom: '5rem' }}>
       <div className="container">
-        
+
         {/* Progress Stepper */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '3.5rem' }}>
           {[
@@ -65,11 +150,11 @@ const Payment = () => {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
-          
+
           {/* Left: Payment Methods */}
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
             style={{ background: 'white', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 24px 64px rgba(147,69,43,0.08)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            
+
             <div>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: 'var(--color-secondary)', marginBottom: '0.3rem' }}>
                 Choose <span style={{ color: 'var(--color-primary)' }}>Payment</span>
@@ -119,6 +204,18 @@ const Payment = () => {
                 <p style={{ fontSize: '0.65rem', color: 'white', marginTop: '4px' }}>SSL Secured</p>
               </div>
             </div>
+
+            {/* WhatsApp notice */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.6rem',
+              padding: '0.85rem 1rem', background: '#f0fdf4',
+              borderRadius: '14px', border: '1px solid #bbf7d0'
+            }}>
+              <MessageCircle size={18} color="#16a34a" />
+              <p style={{ fontSize: '0.82rem', color: '#166534', fontWeight: 500 }}>
+                After payment, your order details will be sent to our WhatsApp automatically.
+              </p>
+            </div>
           </motion.div>
 
           {/* Right: Payment Detail Panel */}
@@ -127,7 +224,7 @@ const Payment = () => {
               {selectedMethod === 'card' ? (
                 <motion.div key="card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                   style={{ background: 'white', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 24px 64px rgba(147,69,43,0.08)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  
+
                   {/* Virtual Card */}
                   <div style={{
                     background: 'linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%)',
@@ -194,21 +291,32 @@ const Payment = () => {
               )}
             </AnimatePresence>
 
+            {/* Order Summary quick view */}
+            {customerInfo && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+                style={{ background: 'white', borderRadius: '20px', padding: '1.5rem', boxShadow: '0 8px 24px rgba(147,69,43,0.06)', border: '1px solid rgba(147,69,43,0.08)' }}>
+                <p style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#aaa', marginBottom: '0.75rem' }}>Delivering to</p>
+                <p style={{ fontWeight: 700, color: 'var(--color-secondary)', fontSize: '0.95rem' }}>{customerInfo.name}</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', marginTop: '0.2rem' }}>{customerInfo.address}, {customerInfo.city} - {customerInfo.pincode}</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)' }}>📞 {customerInfo.phone}</p>
+              </motion.div>
+            )}
+
             <button onClick={handlePayment} disabled={isProcessing}
               className="btn btn-primary"
               style={{ padding: '1.25rem', fontSize: '1.05rem', borderRadius: '18px', width: '100%', justifyContent: 'center', opacity: isProcessing ? 0.8 : 1 }}>
               {isProcessing ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <div style={{ width: '22px', height: '22px', border: '3px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
-                  Processing Payment...
+                  Placing Order...
                 </div>
               ) : (
-                <>Confirm & Place Order <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} /></>
+                <>Confirm &amp; Place Order <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} /></>
               )}
             </button>
 
             <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
-              <ShieldCheck size={14} color="#059669" /> Secure, encrypted transaction
+              <ShieldCheck size={14} color="#059669" /> Secure, encrypted transaction · Order saved to database
             </div>
           </div>
         </div>
