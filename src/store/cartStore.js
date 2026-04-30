@@ -14,10 +14,8 @@ export const useCartStore = create((set) => ({
         )
       };
     }
-    // Give item a random price for demo purposes (e.g. 50 - 250 rs)
-    const price = Math.floor(Math.random() * 200) + 50;
     return {
-      cartItems: [...state.cartItems, { ...item, quantity: 1, price }]
+      cartItems: [...state.cartItems, { ...item, quantity: 1, price: item.price ?? 0 }]
     };
   }),
   removeFromCart: (name) => set((state) => ({
